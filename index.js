@@ -8,7 +8,8 @@ async function iniciarJogo() {
     console.log("Iniciando jogo...");
     await wait(1000);
     console.clear();
-    console.log("Começo");
+
 }
 
 await iniciarJogo()
+S
