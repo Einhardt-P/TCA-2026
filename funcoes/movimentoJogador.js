@@ -1,22 +1,22 @@
 const sprites = [
-    "▲",
-    "▶",
-    "▼",
-    "◀"
+    "▲ ",
+    "▶ ",
+    "▼ ",
+    "◀ "
 ];
 let almaPersTrue = 0;
 let visualAlma = sprites[0];
-const modosDaAlma = ["Padrão", "Paciência", "Bravura", "Integridade", "Perseverança", "Bondade", "Justiça"]
+const modosDaAlma = ["Paciência", "Bravura", "Integridade", "Perseverança", "Bondade", "Justiça"]
 const mapa = [
-    ["=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "="],
-    ["|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"],
-    ["|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"],
-    ["|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"],
-    ["|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"],
-    ["|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"],
-    ["|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"],
-    ["|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"],
-    ["=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "="]
+    ["= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= "],
+    ["| ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "| "],
+    ["| ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "| "],
+    ["| ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "| "],
+    ["| ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "| "],
+    ["| ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "| "],
+    ["| ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "| "],
+    ["| ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "| "],
+    ["= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= "]
 ];
 let mapaGerado = ""
 const posJogador = {
@@ -35,13 +35,30 @@ function renderizarMapa() {
         let linha = "";
 
         for (let x = 0; x < mapa[y].length; x++) {
-            if (x === posJogador.x && y === posJogador.y && modoAtual !== "Perseverança") {
+        if (modoAtual !== "Perseverança") {
+            if (x === posJogador.x && y === posJogador.y) {
                 linha += visualAlma;
             } else {
                 linha += mapa[y][x];
                 mapaGerado = linha
             }
+        } else {
+                    if ((mapa[y][x] === "  ") && (y % 2 === 0) && (mapa[y][x] !== visualAlma)) {
+                        mapa[y][x] = "- ";
+                        almaPersTrue = 1;
+                    } else {
+                        if (x === posJogador.x && y === posJogador.y) {
+                            linha += visualAlma;
+                        } else {
+                            linha += mapa[y][x];
+                            mapaGerado = linha;
+                        }
+                    }
+            posJogador.x = 9;
+            posJogador.y = 4;
+            almaPersTrue = 1;
         }
+    }
         process.stdout.write(linha + "\n");
 
     }
@@ -59,7 +76,7 @@ function mover(px, py) {
         novoY >= mapa.length ||
         novoX < 0 ||
         novoX >= mapa[novoY].length ||
-        mapa[novoY][novoX] === "=" || mapa[novoY][novoX] === "|"
+        mapa[novoY][novoX] === "= " || mapa[novoY][novoX] === "| "
     ) {
         return;
     }
@@ -80,37 +97,9 @@ process.stdin.setRawMode(true);
 process.stdin.resume();
 process.stdin.setEncoding("utf8");
 
-function trocarModo() {
-    process.stdin.on("data", (tecla) => {
-    switch (tecla) {
-    case "\u001B[C":
-    modoAlma(-1);
-    break;
 
-    case "\u001B[D":
-    modoAlma(1);
-    break;
-    }
-   });
-}
-
-function modoAlma(soma) {
-            selecaoAlma += soma;
-            if (modoAtual === "Perseverança") {
-            for (let y = 0; y < mapa.length; y++) {
-                for (let x = 0; x < mapa[y].length; x++) {
-                    if ((mapa[y][x] === " ") && (y % 2 === 0) && (mapa[y][x] !== visualAlma)) {
-                        mapa[y][x] = "-";
-                        almaPersTrue = 1;
-                    }
-                }
-            }
-            posJogador.x = 9;
-            posJogador.y = 4;
-        } else {
-            mapaGerado = mapa;
-        }
-
+function modoAlma(modo) {
+        let mult = 1;
         if (selecaoAlma < 0) {
             selecaoAlma = modosDaAlma.length;
         } else {
@@ -119,20 +108,23 @@ function modoAlma(soma) {
             }
         };
 
-        modoAtual = modosDaAlma[selecaoAlma];
+        if (modo === "Perseverança") {
+            mult = 2;
+        }
 
-       mapaGerado += `\nModo da alma: ${modoAtual}\nAPERTE AS SETAS LATERAIS PARA MUDAR O MODO`;
+        modoAtual = modosDaAlma[selecaoAlma];
+        lerPos(mult)
 }
 
-function lerPos() {
+function lerPos(mult) {
     process.stdin.on("data", (tecla) => {
         switch (tecla.toLowerCase()) {
             case "w":
-                mover(0, -(1 + almaPersTrue));
+                mover(0, -1 * mult);
                 break;
 
             case "s":
-                mover(0, (1 + almaPersTrue));
+                mover(0, 1 *  mult);
                 break;
 
             case "a":
@@ -146,7 +138,6 @@ function lerPos() {
         }
 
     })
-
 }
 
-lerPos();
+modoAlma(modoAtual);
