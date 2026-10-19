@@ -12,4 +12,3 @@ async function iniciarJogo() {
 }
 
 await iniciarJogo()
-S
