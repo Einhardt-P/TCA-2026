@@ -1,0 +1,40 @@
+{
+    "Lápis Escolar": {
+        "nome": "Lápis Escolar",
+        "ID": "WPN",
+        "ataque": 1,
+        "descricao": "* LAPIS ESCOLAR: ATQ 1.\n* Um lápis comum. Parece estar mastigado.",
+            "DarkWorld": {
+                "nome": "Espada Escriba",
+                "ataque": 1,
+                "descricao": "* Uma espada de madeira com um núcleo de grafite. Parece... mastigada?",
+                "bonusMagia": 0
+            },
+        "quantidade": 0
+    },
+
+    "Régua Quebrada": {
+        "nome": "Régua Quebrada",
+        "ID": "WPN",
+        "ataque": 2,
+        "descricao": "* RÉGUA QUEBRADA: ATQ 3.\n* Uma régua com uma ponta quebrada, parece afiada. Nâo há medidas para o estrago.",
+            "DarkWorld": {
+                "nome": "Lança Métrica",
+                "ataque": 6,
+                "descricao": "* LANÇA MÉTRICA: ATQ 6.\n* Uma lança com medidas em centímetros no seu cabo, estão fora de medida. Causa um dano imensurável",
+                "bonusMagia": 1
+            }
+    },
+
+    "Lapiseira": {
+        "nome": "Lapiseira",
+        "ID": "WPN",
+        "ataque": 2,
+        "descricao": "LAPISEIRA: ATQ 2.\n* Uma lapiseira de grafite 7mm. É bastante barulhenta.",
+            "DarkWorld": {
+                "nome": "Espada Mecânica",
+                "ataque": 5,
+                "descricao": "* ESPADA MECÂNICA: ATQ 5.\n* Uma espada de metal com uma ponta de grafite afiada e retrátil. Causa um grande dano crítico."
+            }
+    }
+}
