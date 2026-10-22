@@ -1,40 +1,63 @@
 {
+    "ID": "WPN",
+
     "Lápis Escolar": {
         "nome": "Lápis Escolar",
-        "ID": "WPN",
         "ataque": 1,
-        "descricao": "* LAPIS ESCOLAR: ATQ 1.\n* Um lápis comum. Parece estar mastigado.",
+        "descricao": "* LAPIS ESC.: ATQ 1.\n* Um lápis comum. Parece estar mastigado.",
             "DarkWorld": {
                 "nome": "Espada Escriba",
                 "ataque": 1,
-                "descricao": "* Uma espada de madeira com um núcleo de grafite. Parece... mastigada?",
+                "descricao": "* ESPADA ESC.: ATQ 1\n* Uma espada de madeira com um núcleo de grafite. Parece... Mastigada?",
                 "bonusMagia": 0
-            },
-        "quantidade": 0
-    },
-
+            }
+        },
+        
     "Régua Quebrada": {
         "nome": "Régua Quebrada",
-        "ID": "WPN",
         "ataque": 2,
-        "descricao": "* RÉGUA QUEBRADA: ATQ 3.\n* Uma régua com uma ponta quebrada, parece afiada. Nâo há medidas para o estrago.",
-            "DarkWorld": {
+        "descricao": "* RÉGUA QUEB.: ATQ 3.\n* Uma régua com uma ponta quebrada. Parece afiada. Nâo há medidas para o estrago.",
+        "DarkWorld": {
                 "nome": "Lança Métrica",
                 "ataque": 6,
-                "descricao": "* LANÇA MÉTRICA: ATQ 6.\n* Uma lança com medidas em centímetros no seu cabo, estão fora de medida. Causa um dano imensurável",
+                "descricao": "* LANÇA MÉT.: ATQ 6.\n* Uma lança com medidas em centímetros no seu cabo. Estão fora de medida. Causa um dano imensurável",
                 "bonusMagia": 1
             }
-    },
-
-    "Lapiseira": {
-        "nome": "Lapiseira",
-        "ID": "WPN",
-        "ataque": 2,
-        "descricao": "LAPISEIRA: ATQ 2.\n* Uma lapiseira de grafite 7mm. É bastante barulhenta.",
+        },
+        
+        "Lapiseira": {
+            "nome": "Lapiseira",
+            "ataque": 2,
+            "descricao": "LAPISEIRA: ATQ 2.\n* Uma lapiseira de grafite 7mm. É bastante barulhenta.",
             "DarkWorld": {
                 "nome": "Espada Mecânica",
                 "ataque": 5,
-                "descricao": "* ESPADA MECÂNICA: ATQ 5.\n* Uma espada de metal com uma ponta de grafite afiada e retrátil. Causa um grande dano crítico."
+                "descricao": "* ESPADA MEC.: ATQ 5.\n* Uma espada de metal com uma ponta de grafite afiada e retrátil. Causa um grande dano crítico.",
+                "bonusMagia": 0
+            }
+        },
+        
+        "Caneta Esferográfica": {
+        "nome": "Caneta Esferográfica", 
+        "ataque": 2,
+        "descricao": "* CANETA ESFER.: ATQ 2\n* Uma caneta estourada com uma ponta emperrada. Ela sujou sua mão. Até que cheira bem.",
+            "DarkWorld": {
+                "nome": "Espadográfica",
+                "ataque": 8,
+                "descricao": "* ESPADOGRÁFICA: ATQ 8\n* Uma espada transparente rachada com um tubo de tinta interno. Sua ponta tem uma camada de tinta afiada que pode lançar tinta nos inimigos. Que lambança.",
+                "bonusMagia": 3
+            }
+    },
+
+    "Borracha do Jacó": {
+        "nome": "Borracha do Jacó",
+        "ataque": 6,
+        "descricao": "* BORRACHA D. JACÓ: ATQ 6\n * Uma borracha de tamanho desproporcional. Parece uma pedra em forma de apagador. Ótima como arma.",
+            "DarkWorld": {
+                "nome": "Maça Elástica",
+                "ataque": 13,
+                "descricao": "* MAÇA ELAS.: ATQ 13\n* Uma maça quadrada e compacta de borracha. Parece metal puro. Agora é uma arma.",
+                "bonusMagia": 0
             }
     }
 }
