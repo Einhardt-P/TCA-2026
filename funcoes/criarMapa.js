@@ -1,6 +1,5 @@
 export function criarMapa(mapa) {
-    mapa = mapa.replace(/^\n|\n$/g, "");
-
+    return mapa.replace(/^\n|\n$/g, "").split("\n").map(linha => [...linha]);
 }
 
 let beiraDoLago =
@@ -21,3 +20,5 @@ let beiraDoLago =
     (0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)  #*******************************************
       }{    }{    }{    }{    }{    }{    }{    }{    #******************************************* 
                                                       #*******************************************`
+
+beiraDoLago = criarMapa(beiraDoLago)

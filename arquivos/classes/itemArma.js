@@ -1,10 +1,10 @@
 export class itemArmaDW {
-  constructor(nome, ID, ataque, descricao, bonusMagia) {
-    this.nome = nome;
-    this.ID = "DW" + ID;
-    this.desc = descricao;
-    this.ataque = ataque;
-    this.bonusMagia = bonusMagia;
+  constructor(modelo) {
+    this.nome = modelo.DarkWorld.nome;
+    this.ID = "DW" + modelo.DarkWorld.ID;
+    this.desc = modelo.DarkWorld.descricao;
+    this.ataque = modelo.DarkWorld.ataque;
+    this.bonusMagia = modelo.DarkWorld.bonusMagia;
   }
   sobreItem() {
     console.log(this.descricao)

@@ -1,12 +1,12 @@
 import { itemArmaDW } from "./itemArma";
 
 export class clonadorArmas {
-  constructor(nome, ID, ataque, descricao, nomeDW, ataqueDW, descricaoDW, bonusMagia) {
-    this.nome = nome;
-    this.ID = "LW" + ID;
-    this.desc = descricao;
-    this.ataque = ataque;
-    this.DarkWorld = new itemArmaDW(nomeDW, ID, ataqueDW, descricaoDW, bonusMagia);
+  constructor(modelo) {
+    this.nome = modelo.nome;
+    this.ID = "LW" + modelo.ID;
+    this.desc = modelo.descricao;
+    this.ataque = modelo.ataque;
+    this.DarkWorld = new itemArmaDW(modelo);
   }
   sobreItem() {
     console.log(this.descricao)
