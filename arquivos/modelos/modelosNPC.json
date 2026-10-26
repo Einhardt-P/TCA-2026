@@ -1,0 +1,33 @@
+{
+    "NPCsAgressivos": {
+        "DarkWorld": {
+            "QuartoDaDess": {
+                "HoHoHolmgang": {
+                    "HPMax": "350",
+                    "Ataques": [],
+                    "MensagensCombate": [],
+                    "DiálogosCombate": [],
+                    "Ações": [],
+                    "ItemLW": "Boneco de Papai Noel"
+                },
+                
+                "Cardibim": {
+                    "HPMax": "200",
+                    "Ataques": [],
+                    "MensagensCombate": [],
+                    "DiálogosCombate": [],
+                    "Ações": [],
+                    "ItemLW": "Almofada de Coração"
+                },
+
+                "Holitar": {
+                    "HPMax": "1000",
+                    "MensagensCombate": [],
+                    "DiálogosCombate": [],
+                    "Ações": [],
+                    "ItemLW": "Violão"
+                }
+            }
+        }
+    }
+}

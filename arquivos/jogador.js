@@ -31,8 +31,6 @@ let jogador = {
             if (this.raca === "Humano") {
                 this.nullMagia = 0; 
             }
-        } else if (this.raca === "Treviano") {
-            this.classe = "Trevas";
         } else {
             this.classe = "???";
         }
