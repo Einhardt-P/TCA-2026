@@ -114,6 +114,7 @@ process.stdout.write("\x1B[2J\x1B[H");
 process.stdout.write("\x1B[?25l");
 
 setInterval(() => {
+    process.stdout.write("x1B[H");
     console.clear();
     renderizarMapa(mapa)
 }, (1000/60));

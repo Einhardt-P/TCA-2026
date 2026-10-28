@@ -1,5 +1,5 @@
 let jogador = {
-        nome: entradaNome,
+        nome: nomeEntrada,
         raca: "",
         classe: "",
         LOVE: 0,
