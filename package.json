@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "Um jogo de RPG simples inspirado em UNDERTALE e DELTARUNE construído com Node.js.",
   "main": "index.js",
-  "type" : "module",
+  "type": "module",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
+    "audio": "^2.14.0",
     "express": "^5.3.0"
   }
 }

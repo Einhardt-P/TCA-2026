@@ -1,3 +1,4 @@
+import { nomeEntrada } from "../index.js"
 let jogador = {
         nome: nomeEntrada,
         raca: "",
@@ -22,7 +23,7 @@ let jogador = {
         inventarioDW: [], 
     
     definirRaca() {
-      this.raca = racaJogador[random % 4];
+      this.raca = racaJogador[random % 2];
     },
 
     definirClasse() {

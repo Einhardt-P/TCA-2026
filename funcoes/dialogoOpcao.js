@@ -1,12 +1,19 @@
 import { wait } from "./wait.js";
+import { definirSom } from "./tocarSom.js";
 
 function renderizarOpcoes(pergunta, opcoes, indiceSelecionado) {
     console.clear();
-    const opcoesRenderizadas = opcoes.map((opcao, indice) =>
-        indice === indiceSelecionado ? `${opcao} ◀` : opcao
-    );
+    let opcoesRenderizadas = [];
 
-    console.log(`${pergunta}\n${opcoesRenderizadas.join("\n")}`);
+    for (let i = 0; i < opcoes.length; i++) {
+        if (i === indiceSelecionado) {
+            opcoesRenderizadas.push(opcoes[i] + " ◀");
+        } else {
+            opcoesRenderizadas.push(opcoes[i]);
+        }
+    }
+
+    console.log(pergunta + "\n" + opcoesRenderizadas.join("\n"));
 }
 
 function selecionarOpcao(pergunta, opcoes) {
@@ -15,24 +22,33 @@ function selecionarOpcao(pergunta, opcoes) {
         renderizarOpcoes(pergunta, opcoes, indiceSelecionado);
 
         const tratarTecla = (tecla) => {
-            const entrada = tecla.toString().toLowerCase();
+            let entrada = tecla.toString().toLowerCase();
 
-            if (entrada === "w" || entrada === "arrowup") {
-                indiceSelecionado = (indiceSelecionado - 1 + opcoes.length) % opcoes.length;
-                renderizarOpcoes(pergunta, opcoes, indiceSelecionado);
-                return;
-            }
+            switch (entrada) {
+                case "w":
+                    indiceSelecionado = indiceSelecionado - 1;
+                    if (indiceSelecionado < 0) {
+                        indiceSelecionado = opcoes.length - 1;
+                    }
+                    definirSom("./sound/snd_menumove.wav", false, 1);
+                    renderizarOpcoes(pergunta, opcoes, indiceSelecionado);
+                    break;
 
-            if (entrada === "s" || entrada === "arrowdown") {
-                indiceSelecionado = (indiceSelecionado + 1) % opcoes.length;
-                renderizarOpcoes(pergunta, opcoes, indiceSelecionado);
-                return;
-            }
+                case "s":
+                    indiceSelecionado = indiceSelecionado + 1;
+                    if (indiceSelecionado > opcoes.length - 1) {
+                        indiceSelecionado = 0;
+                    }
+                    definirSom("./sound/snd_menumove.wav", false, 1);
+                    renderizarOpcoes(pergunta, opcoes, indiceSelecionado);
+                    break;
 
-            if (entrada === "z" || entrada === "\r" || entrada === "\n") {
-                process.stdin.removeListener("data", tratarTecla);
-                resolve(opcoes[indiceSelecionado]);
-                return;
+                case "\n":
+                  case "\r":
+                    definirSom("./sound/snd_select.wav", false, 1);
+                    process.stdin.removeListener("data", tratarTecla);
+                    resolve(opcoes[indiceSelecionado]);
+                    break;
             }
         };
 
