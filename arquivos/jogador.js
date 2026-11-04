@@ -1,10 +1,12 @@
-import { nomeEntrada } from "../index.js"
-let jogador = {
+import {nomeEntrada, nomeVessel} from "index.js";
+
+export let jogador = {
         nome: nomeEntrada,
+        nomeVessel: nomeVessel,
         raca: "",
-        classe: "",
+        darkWorld: false,
         LOVE: 0,
-        HATE:0,
+        HATE: 0,
         NEUTRAL: 0,
         nullMagia: 1,
         
@@ -23,7 +25,7 @@ let jogador = {
         inventarioDW: [], 
     
     definirRaca() {
-      this.raca = racaJogador[random % 2];
+      this.raca = racaJogador[random % 3];
     },
 
     definirClasse() {
@@ -82,8 +84,5 @@ let jogador = {
         
         this.magia = (1 + this.bonusMagia) * this.nullMagia;
 
-        if (this.raca === "Monstro" && this.HPDW <= 0 ) {
-          this.raca = "Dustner";
-        }
     }
 }

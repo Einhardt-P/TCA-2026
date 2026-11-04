@@ -5,6 +5,7 @@ import { wait } from "./funcoes/wait.js";
 import process from "node:process";
 import { definirSom } from "./funcoes/tocarSom.js";
 import fs from "node:fs/promises";
+import movimentoJogador from "./funcoes/movimentoJogador.js";
 
 const NPCJSON = await fs.readFile("./arquivos/npcs.json", "utf-8");
 const npcs = JSON.parse(NPCJSON);
@@ -32,7 +33,7 @@ async function escreverTempo(dialogo, tempoEscrever, tempoTerminar) {
     console.clear();
 }
 
-async function dialogoPersonagem(voz, dialogo, tempoEscrever, tempoTerminar) {
+async function escreverVoz(voz, dialogo, tempoEscrever, tempoTerminar) {
     for (let i = 0; i < dialogo.length; i++) {
         definirSom(voz, false, 1);
         process.stdout.write(dialogo[i]);
@@ -63,9 +64,9 @@ await escreverTempo("Mas, não vejo razão para não te deixar aqui.", 50, 2000)
 await escreverTempo("Sem mais delongas, que comecemos.", 100, 2000);
 await escreverTempo("Primeiro, seu nome.", 100, 2000);
 let rl = novoReadLine();
-    let nomeEntrada = await rl.question("DIGI'TE SEU NOME:\n\n");
-    console.clear();
-    rl.close();
+export let nomeEntrada = await rl.question("DIGITE SEU NOME:\n\n");
+console.clear();
+rl.close();
 
 
         process.stdout.write("\x1B[2J\x1B[H");
@@ -75,7 +76,7 @@ let rl = novoReadLine();
         for (let escolha = "Não"; escolha === "Não";) {
             console.clear();
             ativarRawMode();
-            escolha = await simOuNao("Você acei'ta esse nome?");
+            escolha = await simOuNao("Você aceita esse nome?");
         
         if (escolha === "Não" || escolha === "Voltar") {
             fecharRawMode();
@@ -96,7 +97,7 @@ console.clear();
 await escreverTempo(`'${nomeEntrada}'`, 50, 1500);
 await escreverTempo("Agora, vamos dar um nome a seu receptáculo neste mundo.", 50, 1000);
 let rl1 = novoReadLine();
-let nomeVessel = await rl1.question("DIGITE O NOME DO SEU RECEPTÁCULO (Max.: 13 caracteres, sem espaços.):\n\n");
+export let nomeVessel = await rl1.question("DIGITE O NOME DO SEU RECEPTÁCULO (Max.: 13 caracteres, sem espaços.):\n\n");
 console.clear()
 rl1.close();
 
@@ -118,7 +119,7 @@ rl1.close();
             nomeVessel = "";
             console.clear();
             await wait(1000);
-            nomeVessel = await rl.question("DIGITE O NOME DO SEU RECEPTÁCULO:\n\n");
+            nomeVessel = await rl.question("DIGITE O NOME DO SEU RECEPTÁCULO (Max.: 13 caracteres, sem espaços.):\n\n");
             rl.close();
         }
     }
@@ -142,14 +143,15 @@ if (resposta1 === "Sim") {
     console.clear();
     await escreverTempo("Ótimo, você está preparado.", 50, 1500);
     musica.pause();
-    await dialogoPersonagem(npcs.Historia.padrao.voz, "Não esqueça.", 250, 3000);
+    await escreverVoz(npcs.Historia.padrao.voz, "Não esqueça.", 250, 3000);
 } else if (resposta1 === "Não") {
     console.clear();
     musica.pause();
     await escreverTempo("É uma pena.", 100, 1500);
-    await dialogoPersonagem(npcs.Historia.padrao.voz, "Você não tem escolha.", 250, 1000);
+    await escreverVoz(npcs.Historia.padrao.voz, "Você não tem escolha.", 250, 1000);
     await wait(2000);
 } else {
+    console.clear();
     await escreverTempo("'Esqueci de algo'... Você fala sobre seu corpo. Estou certo?", 100, 2500);
     musica.pause();
     await escreverTempo("Interesssante. Muito, muito interessante.", 100, 1500);

@@ -1,22 +1,13 @@
 import { criarMapa } from "./criarMapa.js";
-let beiraDoLago = `
-  __    __    __    __    __    __    __    __    #*******************************************
- (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)   #*******************************************
-(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)  #*******************************************
-  }{    }{    }{    }{    }{    }{    }{    }{    #*******************************************
-                                                  #*******************************************
-###################################################*******************************************
-                                                  |*******************************************
-                                               () |*******************************************
-                                                  |*******************************************
-                                                  |*******************************************
-                                                  |*******************************************
-###################################################*******************************************
-  __    __    __    __    __    __    __    __    #*******************************************
- (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)   #*******************************************
-(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)  #*******************************************
-  }{    }{    }{    }{    }{    }{    }{    }{    #*******************************************
-                                                  #*******************************************`
+import fs from "node:fs/promises";
+
+const MAPASJSON = await fs.readFile("../arquivos/modelos/setoresMapa.json", "utf8");
+const setores = JSON.parse(MAPASJSON);
+
+function processarMapaJSON(mundo, mapa) {
+  mapa = setores[mundo][mapa]["mapa"];
+  return mapa.map((linha) => [...linha]);
+}
 
 const posJogador = {
     x: 1,
@@ -42,7 +33,7 @@ let mapa = [
     ["| ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "| "],
     ["= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= "]
 ];
-mapa = criarMapa(beiraDoLago)
+mapa = processarMapaJSON("LightWorld", "Lago");
 let mapaGerado = ""
 
 let selecaoAlma = 0;
@@ -117,7 +108,7 @@ setInterval(() => {
     process.stdout.write("x1B[H");
     console.clear();
     renderizarMapa(mapa)
-}, (1000/60));
+}, (1000/30));
 
 process.stdin.setRawMode(true);
 process.stdin.resume();
@@ -149,7 +140,12 @@ function lerPos(mult) {
                 visualAlma = sprites[0];
                 mover(0, -1 * mult);
                 break;
-
+                
+            case "d":
+                visualAlma = sprites[1];
+                mover(1, 0);
+                break;
+                
             case "s":
                 visualAlma = sprites[2];
                 mover(0, 1 *  mult);
@@ -160,10 +156,10 @@ function lerPos(mult) {
                 mover(-1, 0);
                 break;
 
-            case "d":
-                visualAlma = sprites[1];
-                mover(1, 0);
-                break;
+            case "z":
+                    if (visualAlma === sprites[0] && mapa[y - 1][x] === coordInterativa.some()) {
+                        mapa[y - 1][x]
+                    } 
 
         }
 
