@@ -1,4 +1,3 @@
-import { criarMapa } from "./criarMapa.js";
 import fs from "node:fs/promises";
 
 const MAPASJSON = await fs.readFile("../arquivos/modelos/setoresMapa.json", "utf8");
@@ -11,7 +10,7 @@ function processarMapaJSON(mundo, mapa) {
 
 const posJogador = {
     x: 1,
-    y: 8
+    y: 1
 }
 const sprites = [
     "▲",

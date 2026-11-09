@@ -2,15 +2,19 @@ import fs from "node:fs/promises";
 import novoReadLine from "./readline.js";
 
 let MAPASJSON = await fs.readFile(
-  "../arquivos/modelos/setoresMapa.json",
+  "./arquivos/modelos/setoresMapa.json",
   "utf8",
 );
 let setores = JSON.parse(MAPASJSON);
 
-function criarMapa(mapa) {
+export function criarMapa(mapa) {
   return mapa
     .replace(/^\n|\n$/g, "")
     .split("\n");
+}
+
+export function carregarMapaJSON(linhas) {
+  return linhas.map((linha) => [...linha.replace(/\r$/, "")]);
 }
 
 async function adicionarJSON(mundo) {
@@ -29,4 +33,3 @@ async function adicionarJSON(mundo) {
   await fs.writeFile("../arquivos/modelos/setoresMapa.json", MAPASJSON, "utf8");
 }
 
-await adicionarJSON("DarkWorld")
