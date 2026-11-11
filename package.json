@@ -4,6 +4,9 @@
   "description": "Um jogo de RPG simples inspirado em UNDERTALE e DELTARUNE construído com Node.js.",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node index.js"
   },

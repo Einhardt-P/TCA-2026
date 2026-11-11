@@ -7,22 +7,39 @@ import { definirSom } from "./funcoes/tocarSom.js";
 import fs from "node:fs/promises";
 import { carregarMapaJSON } from "./funcoes/criarMapa.js";
 
-function ativarRawMode() {
-        process.stdin.setRawMode(true);
-        process.stdin.resume();
-        process.stdin.setEncoding("utf8");
+
+function ignorarTeclado() {
+    const bloquear = () => { };
+
+    process.stdin.on("data", bloquear);
+
+    return () => {
+        process.stdin.off("data", bloquear);
+    };
 }
+
+function ativarRawMode() {
+    if (!process.stdin.isTTY) return;
+
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.setEncoding("utf8");
+}
+
 function fecharRawMode() {
+    if (!process.stdin.isTTY) return;
+
     process.stdin.setRawMode(false);
     process.stdin.pause();
 }
+
 
 const MAPASJSON = await fs.readFile("./arquivos/modelos/setoresMapa.json", "utf8");
 const setores = JSON.parse(MAPASJSON);
 
 function processarMapaJSON(mundo, mapa) {
-  mapa = setores[mundo][mapa]["mapa"];
-  return mapa.map((linha) => [...linha]);
+    mapa = setores[mundo][mapa]["mapa"];
+    return mapa.map((linha) => [...linha]);
 }
 
 const posJogador = {
@@ -50,47 +67,59 @@ let areaCombate = [
 ];
 let mapa = areaCombate
 let mapaGerado = ""
+let textoInteracao = "";
+let dialogoAtivo = false;
+let dialogoConcluido = false;
+let velocidadeNormalInteracao = 0;
+let velocidadeInteracao = 0;
+let pularInteracao = false;
 
 let modoAtual = "";
 
 function renderizarMapa(Mapa) {
 
-    process.stdout.write("\x1B[H")
+    process.stdout.write("\x1B[H\x1B[J")
 
     for (let y = 0; y < Mapa.length; y++) {
         let linha = "";
 
         for (let x = 0; x < Mapa[y].length; x++) {
-        if (modoAtual !== "Perseverança") {
-            if (x === posJogador.x && y === posJogador.y) {
-                linha += visualAlma;
+            if (modoAtual !== "Perseverança") {
+                if (x === posJogador.x && y === posJogador.y) {
+                    linha += visualAlma;
+                } else {
+                    linha += Mapa[y][x];
+                    mapaGerado = linha
+                }
             } else {
-                linha += Mapa[y][x];
-                mapaGerado = linha
-            }
-        } else {
-                    if ((Mapa[y][x] === " ") && (y % 2 === 0) && (Mapa[y][x] !== visualAlma)) {
-                        Mapa[y][x] = "- ";
-                        almaPersTrue = 1;
+                if ((Mapa[y][x] === " ") && (y % 2 === 0) && (Mapa[y][x] !== visualAlma)) {
+                    Mapa[y][x] = "- ";
+                    almaPersTrue = 1;
+                } else {
+                    if (x === posJogador.x && y === posJogador.y) {
+                        linha += visualAlma;
                     } else {
-                        if (x === posJogador.x && y === posJogador.y) {
-                            linha += visualAlma;
-                        } else {
-                            linha += mapa[y][x];
-                            mapaGerado = linha;
-                        }
+                        linha += mapa[y][x];
+                        mapaGerado = linha;
                     }
-            posJogador.x = 9;
-            posJogador.y = 4;
-            almaPersTrue = 1;
+                }
+                posJogador.x = 9;
+                posJogador.y = 4;
+                almaPersTrue = 1;
+            }
         }
-    }
         process.stdout.write(linha + "\n");
 
     }
 
 
-    process.stdout.write("\nWASD para andar\n");
+    process.stdout.write("\nWASD para andar\n\n");
+    process.stdout.write(textoInteracao);
+    if (dialogoConcluido) {
+        process.stdout.write("\n\nPressione Z para continuar.");
+    } else if (dialogoAtivo) {
+        process.stdout.write("\n\nZ: normal | X: acelerar | C: pular");
+    }
 }
 
 function mover(px, py) {
@@ -117,29 +146,50 @@ function mover(px, py) {
 
 
 function iniciarMovimento(modo) {
-        let mult = 1;
-        if (modo === "Perseverança") {
-            mult = 2;
-        }
-        lerPos(mult)
+    let mult = 1;
+    if (modo === "Perseverança") {
+        mult = 2;
+    }
+    lerPos(mult)
 }
 
 function lerPos(mult) {
     process.stdin.on("data", (tecla) => {
+        if (dialogoAtivo) {
+            if (dialogoConcluido) {
+                if (tecla.toLowerCase().includes("z")) {
+                    textoInteracao = "";
+                    dialogoAtivo = false;
+                    dialogoConcluido = false;
+                }
+            } else {
+                if (tecla.toLowerCase().includes("z")) {
+                    velocidadeInteracao = velocidadeNormalInteracao;
+                }
+                if (tecla.toLowerCase().includes("x")) {
+                    velocidadeInteracao = velocidadeNormalInteracao / 5;
+                }
+                if (tecla.toLowerCase().includes("c")) {
+                    pularInteracao = true;
+                }
+            }
+            return;
+        }
+
         switch (tecla.toLowerCase()) {
             case "w":
                 visualAlma = sprites[0];
                 mover(0, -1 * mult);
                 break;
-                
+
             case "d":
                 visualAlma = sprites[1];
                 mover(1, 0);
                 break;
-                
+
             case "s":
                 visualAlma = sprites[2];
-                mover(0, 1 *  mult);
+                mover(0, 1 * mult);
                 break;
 
             case "a":
@@ -148,14 +198,23 @@ function lerPos(mult) {
                 break;
 
             case "z":
-                    if (visualAlma === sprites[0] && mapa[y - 1][x] === coordInterativa.some()) {
-                        mapa[y - 1][x]
-                    } 
-
+                if (visualAlma === sprites[0] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x}-Y${posJogador.y - 1}`)) {
+                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x}-Y${posJogador.y - 1}`], 250)
+                }
+                if (visualAlma === sprites[1] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x + 1}-Y${posJogador.y}`)) {
+                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x + 1}-Y${posJogador.y}`], 250)
+                }
+                if (visualAlma === sprites[2] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x}-Y${posJogador.y + 1}`)) {
+                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x}-Y${posJogador.y + 1}`], 250)
+                }
+                if (visualAlma === sprites[3] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x - 1}-Y${posJogador.y}`)) {
+                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x - 1}-Y${posJogador.y}`], 250)
+                }
+                break;
         }
 
     })
-    
+
 }
 
 
@@ -184,9 +243,35 @@ async function escreverVoz(voz, dialogo, tempoEscrever, tempoTerminar) {
         await wait(devePausarMais ? tempoEscrever / 2 : tempoEscrever);
     }
 
+    
     await wait(tempoTerminar);
     console.clear();
 }
+
+async function dialogoConfirmar(voz, dialogo, tempoEscrever) {
+    dialogoAtivo = true;
+    dialogoConcluido = false;
+    textoInteracao = "";
+    velocidadeNormalInteracao = tempoEscrever;
+    velocidadeInteracao = tempoEscrever;
+    pularInteracao = false;
+
+    for (let i = 0; i < dialogo.length; i++) {
+        textoInteracao += dialogo[i];
+        definirSom(voz, false, 1);
+        const devePausarMais = [",", ".", "!", "?", ";"].includes(dialogo[i]);
+        if (!pularInteracao) {
+            if (devePausarMais) {
+                await wait(velocidadeInteracao / 2);
+            } else {
+                await wait(velocidadeInteracao);
+            }
+        }
+    }
+
+    dialogoConcluido = true;
+}
+
 async function iniciarJogo() {
     console.log("Iniciando jogo...");
     await wait(1000);
@@ -212,28 +297,28 @@ console.clear();
 rl.close();
 
 
-        process.stdout.write("\x1B[2J\x1B[H");
-        process.stdout.write("\x1B[?25l");
+process.stdout.write("\x1B[2J\x1B[H");
+process.stdout.write("\x1B[?25l");
 
-        
-        for (let escolha = "Não"; escolha === "Não";) {
-            console.clear();
-            ativarRawMode();
-            escolha = await simOuNao("Você aceita esse nome?");
-        
-        if (escolha === "Não" || escolha === "Voltar") {
-            fecharRawMode();
-            let rl = novoReadLine();
-            nomeEntrada = "";
-            console.clear();
-            await wait(1000);
-            nomeEntrada = await rl.question("DIGITE SEU NOME:\n\n");
-            rl.close();
-        }
+
+for (let escolha = "Não"; escolha === "Não";) {
+    console.clear();
+    ativarRawMode();
+    escolha = await simOuNao("Você aceita esse nome?");
+
+    if (escolha === "Não" || escolha === "Voltar") {
+        fecharRawMode();
+        let rl = novoReadLine();
+        nomeEntrada = "";
+        console.clear();
+        await wait(1000);
+        nomeEntrada = await rl.question("DIGITE SEU NOME:\n\n");
+        rl.close();
     }
-    process.stdin.setRawMode(false);
-    process.stdin.pause();
-    
+}
+process.stdin.setRawMode(false);
+process.stdin.pause();
+
 
 await wait(1000);
 console.clear();
@@ -244,30 +329,30 @@ export let nomeVessel = await rl1.question("DIGITE O NOME DO SEU RECEPTÁCULO (M
 console.clear()
 rl1.close();
 
-    process.stdout.write("\x1B[2J\x1B[H");
-    process.stdout.write("\x1B[?25l");
+process.stdout.write("\x1B[2J\x1B[H");
+process.stdout.write("\x1B[?25l");
 
-    
-    for (let escolha = "Não"; escolha === "Não";) {
-        console.clear();
-        ativarRawMode();
-        if (nomeVessel.length < 13 && nomeVessel.includes(" ") === false) {
+
+for (let escolha = "Não"; escolha === "Não";) {
+    console.clear();
+    ativarRawMode();
+    if (nomeVessel.length < 13 && nomeVessel.includes(" ") === false) {
         escolha = await simOuNao("Você aceita esse nome?");
-        } else {
-            escolha = "Não";
-        }
-        if (escolha === "Não" || escolha === "Voltar") {
-            fecharRawMode();
-            let rl = novoReadLine();
-            nomeVessel = "";
-            console.clear();
-            await wait(1000);
-            nomeVessel = await rl.question("DIGITE O NOME DO SEU RECEPTÁCULO (Max.: 13 caracteres, sem espaços.):\n\n");
-            rl.close();
-        }
+    } else {
+        escolha = "Não";
     }
+    if (escolha === "Não" || escolha === "Voltar") {
+        fecharRawMode();
+        let rl = novoReadLine();
+        nomeVessel = "";
+        console.clear();
+        await wait(1000);
+        nomeVessel = await rl.question("DIGITE O NOME DO SEU RECEPTÁCULO (Max.: 13 caracteres, sem espaços.):\n\n");
+        rl.close();
+    }
+}
 
-    fecharRawMode();
+fecharRawMode();
 await wait(1000);
 console.clear();
 if (nomeEntrada.toLowerCase() === nomeVessel.toLowerCase()) {
@@ -309,12 +394,13 @@ await wait(2000);
 let localAtual = setores["LightWorld"]["Lago"];
 musica = definirSom(localAtual["musica"], true, 1)
 mapa = carregarMapaJSON(localAtual["mapa"]);
-        process.stdout.write("\x1B[2J\x1B[H");
-        process.stdout.write("\x1B[?25l");
-        ativarRawMode();
+process.stdout.write("\x1B[2J\x1B[H");
+process.stdout.write("\x1B[?25l");
+ativarRawMode();
 
-    console.clear();
+
 setInterval(() => {
     renderizarMapa(mapa);
-}, (1000/30)); 
+}, (1000 / 30));
 iniciarMovimento(modoAtual);
+console.clear();
