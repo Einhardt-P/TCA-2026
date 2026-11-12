@@ -9,12 +9,19 @@ import { carregarMapaJSON } from "./funcoes/criarMapa.js";
 
 
 function ignorarTeclado() {
-    const bloquear = () => { };
+    if (process.stdin.isTTY) {
+        process.stdin.setRawMode(true);
+    }
 
-    process.stdin.on("data", bloquear);
+    const descartar = () => {};
+    process.stdin.on("data", descartar);
 
     return () => {
-        process.stdin.off("data", bloquear);
+        process.stdin.off("data", descartar);
+
+        if (process.stdin.isTTY) {
+            process.stdin.setRawMode(false);
+        }
     };
 }
 
@@ -42,7 +49,7 @@ function processarMapaJSON(mundo, mapa) {
     return mapa.map((linha) => [...linha]);
 }
 
-const posJogador = {
+export const posJogador = {
     x: 46,
     y: 8
 }
@@ -66,7 +73,6 @@ let areaCombate = [
     ["= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= ", "= "]
 ];
 let mapa = areaCombate
-let mapaGerado = ""
 let textoInteracao = "";
 let dialogoAtivo = false;
 let dialogoConcluido = false;
@@ -118,7 +124,7 @@ function renderizarMapa(Mapa) {
     if (dialogoConcluido) {
         process.stdout.write("\n\nPressione Z para continuar.");
     } else if (dialogoAtivo) {
-        process.stdout.write("\n\nZ: normal | X: acelerar | C: pular");
+        process.stdout.write("\n\nZ: normal | X: completar | C: pular");
     }
 }
 
@@ -167,7 +173,7 @@ function lerPos(mult) {
                     velocidadeInteracao = velocidadeNormalInteracao;
                 }
                 if (tecla.toLowerCase().includes("x")) {
-                    velocidadeInteracao = velocidadeNormalInteracao / 5;
+                    velocidadeInteracao = 0;
                 }
                 if (tecla.toLowerCase().includes("c")) {
                     pularInteracao = true;
@@ -256,6 +262,7 @@ async function dialogoConfirmar(voz, dialogo, tempoEscrever) {
     velocidadeInteracao = tempoEscrever;
     pularInteracao = false;
 
+    if (Array.isArray(dialogo) === false) {
     for (let i = 0; i < dialogo.length; i++) {
         textoInteracao += dialogo[i];
         definirSom(voz, false, 1);
@@ -268,7 +275,23 @@ async function dialogoConfirmar(voz, dialogo, tempoEscrever) {
             }
         }
     }
-
+} else {
+    for (let i = 0; i < dialogo.length; i++) {
+        for (let n = 0; n < dialogo[i].length; n++) {
+        textoInteracao += dialogo[i][n];
+        definirSom(voz, false, 1);
+        const devePausarMais = [",", ".", "!", "?", ";"].includes(dialogo[i][n]);
+        if (!pularInteracao) {
+            if (devePausarMais) {
+                await wait(velocidadeInteracao / 2);
+            } else {
+                await wait(velocidadeInteracao);
+            }
+        }
+        }
+        console.clear();
+    }
+}
     dialogoConcluido = true;
 }
 
@@ -365,7 +388,7 @@ await escreverTempo(`${nomeEntrada}... Não é certo que você saiba o que acont
 await escreverTempo("Esta linha do tempo não deveria ser acessível.", 50, 1500);
 await escreverTempo("Você está disposto a passar por sofrimento e angústia?", 50, 1500);
 ativarRawMode();
-let resposta1 = await escolherOpcao("...", ["Sim", "Não", "Você esqueceu de algo."]);
+let resposta1 = await escolherOpcao("...\n", ["Sim", "Não", "Você esqueceu de algo."]);
 fecharRawMode();
 if (resposta1 === "Sim") {
     console.clear();
@@ -391,10 +414,10 @@ fecharRawMode();
 definirSom("./sound/snd_impact.wav", false, 1);
 await wait(2000);
 
-let localAtual = setores["LightWorld"]["Lago"];
+let localAtual = setores["DarkWorld"]["Sala do Ovo"];
 musica = definirSom(localAtual["musica"], true, 1)
 mapa = carregarMapaJSON(localAtual["mapa"]);
-process.stdout.write("\x1B[2J\x1B[H");
+process.stdout.write("\x1B[H");
 process.stdout.write("\x1B[?25l");
 ativarRawMode();
 
@@ -402,5 +425,5 @@ ativarRawMode();
 setInterval(() => {
     renderizarMapa(mapa);
 }, (1000 / 30));
-iniciarMovimento(modoAtual);
 console.clear();
+iniciarMovimento(modoAtual);

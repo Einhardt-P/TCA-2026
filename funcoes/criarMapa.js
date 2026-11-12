@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import novoReadLine from "./readline.js";
+import {posJogador} from "../index.js";
 
 let MAPASJSON = await fs.readFile(
   "./arquivos/modelos/setoresMapa.json",
@@ -9,12 +10,16 @@ let setores = JSON.parse(MAPASJSON);
 
 export function criarMapa(mapa) {
   return mapa
+    .replace(/\r\n?/g, "\n")
     .replace(/^\n|\n$/g, "")
     .split("\n");
 }
 
 export function carregarMapaJSON(linhas) {
   return linhas.map((linha) => [...linha.replace(/\r$/, "")]);
+
+  posJogador.x = localAtual["Spawn"]["X"];
+  posJogador.y = localAtual["Spawn"]["Y"];
 }
 
 async function adicionarJSON(mundo) {
@@ -32,4 +37,3 @@ async function adicionarJSON(mundo) {
   MAPASJSON = JSON.stringify(setores, null, 2);
   await fs.writeFile("../arquivos/modelos/setoresMapa.json", MAPASJSON, "utf8");
 }
-
