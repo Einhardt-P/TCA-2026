@@ -81,6 +81,7 @@ let velocidadeInteracao = 0;
 let pularInteracao = false;
 
 let modoAtual = "";
+let mapaGerado = "";
 
 function renderizarMapa(Mapa) {
 
@@ -114,7 +115,7 @@ function renderizarMapa(Mapa) {
                 almaPersTrue = 1;
             }
         }
-        process.stdout.write(linha + "\n");
+        process.stdout.write(linha);
 
     }
 
@@ -205,16 +206,16 @@ function lerPos(mult) {
 
             case "z":
                 if (visualAlma === sprites[0] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x}-Y${posJogador.y - 1}`)) {
-                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x}-Y${posJogador.y - 1}`], 250)
+                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x}-Y${posJogador.y - 1}`], 100)
                 }
                 if (visualAlma === sprites[1] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x + 1}-Y${posJogador.y}`)) {
-                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x + 1}-Y${posJogador.y}`], 250)
+                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x + 1}-Y${posJogador.y}`], 100)
                 }
                 if (visualAlma === sprites[2] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x}-Y${posJogador.y + 1}`)) {
-                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x}-Y${posJogador.y + 1}`], 250)
+                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x}-Y${posJogador.y + 1}`], 100)
                 }
                 if (visualAlma === sprites[3] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x - 1}-Y${posJogador.y}`)) {
-                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x - 1}-Y${posJogador.y}`], 250)
+                    dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x - 1}-Y${posJogador.y}`], 100)
                 }
                 break;
         }
@@ -254,7 +255,7 @@ async function escreverVoz(voz, dialogo, tempoEscrever, tempoTerminar) {
     console.clear();
 }
 
-async function dialogoConfirmar(voz, dialogo, tempoEscrever) {
+async function dialogoConfirmarComum(voz, dialogo, tempoEscrever) {
     dialogoAtivo = true;
     dialogoConcluido = false;
     textoInteracao = "";
@@ -262,36 +263,62 @@ async function dialogoConfirmar(voz, dialogo, tempoEscrever) {
     velocidadeInteracao = tempoEscrever;
     pularInteracao = false;
 
-    if (Array.isArray(dialogo) === false) {
     for (let i = 0; i < dialogo.length; i++) {
         textoInteracao += dialogo[i];
         definirSom(voz, false, 1);
         const devePausarMais = [",", ".", "!", "?", ";"].includes(dialogo[i]);
+        {
         if (!pularInteracao) {
             if (devePausarMais) {
                 await wait(velocidadeInteracao / 2);
             } else {
                 await wait(velocidadeInteracao);
             }
-        }
-    }
-} else {
-    for (let i = 0; i < dialogo.length; i++) {
-        for (let n = 0; n < dialogo[i].length; n++) {
-        textoInteracao += dialogo[i][n];
-        definirSom(voz, false, 1);
-        const devePausarMais = [",", ".", "!", "?", ";"].includes(dialogo[i][n]);
-        if (!pularInteracao) {
-            if (devePausarMais) {
-                await wait(velocidadeInteracao / 2);
-            } else {
-                await wait(velocidadeInteracao);
-            }
-        }
+        } else {
+            textoInteracao += dialogo.substring(i);
+            break;
         }
         console.clear();
-    }
+        }
 }
+}
+
+async function dialogoConfirmarArray(voz, dialogo, tempoEscrever) {
+    dialogoAtivo = true;
+    dialogoConcluido = false;
+    textoInteracao = "";
+    velocidadeNormalInteracao = tempoEscrever;
+    velocidadeInteracao = tempoEscrever;
+    pularInteracao = false;
+
+    for (let i = 0; i < dialogo.length; i++) {
+        textoInteracao += dialogo[i];
+        definirSom(voz, false, 1);
+        const devePausarMais = [",", ".", "!", "?", ";"].includes(dialogo[i]);
+{
+        if (!pularInteracao) {
+            if (devePausarMais) {
+                await wait(velocidadeInteracao / 2);
+            } else {
+                await wait(velocidadeInteracao);
+            }
+        } else {
+            textoInteracao += dialogo.substring(i);
+            break;
+        }
+        console.clear();
+        }
+}
+}
+
+async function dialogoConfirmar(voz, dialogo, tempoEscrever) {
+    if (Array.isArray(dialogo)) {
+        dialogoConfirmarArray(voz, dialogo)
+    } else {
+        dialogoConfirmarComum(voz, dialogo, tempoEscrever)
+    }
+    
+
     dialogoConcluido = true;
 }
 
@@ -302,117 +329,117 @@ async function iniciarJogo() {
 
 }
 
-await iniciarJogo();
-musica = definirSom("./sound/AUDIO_DRONE.wav", true, 1);
-await escreverTempo("Você está aí?", 200, 2000);
-await escreverTempo("Nós estamos...", 200, 1000);
-await escreverTempo("Conectados?", 200, 2000);
-console.clear();
-await wait(1000);
-await escreverTempo("Você chegou aqui muito cedo.", 50, 1000);
-await escreverTempo("Você não deveria estar aqui.", 50, 1000);
-await escreverTempo("Mas, não vejo razão para não te deixar aqui.", 50, 2000);
-await escreverTempo("Sem mais delongas, que comecemos.", 100, 2000);
-await escreverTempo("Primeiro, seu nome.", 100, 2000);
-let rl = novoReadLine();
-export let nomeEntrada = await rl.question("DIGITE SEU NOME:\n\n");
-console.clear();
-rl.close();
+  await iniciarJogo();
+  musica = definirSom("./sound/AUDIO_DRONE.wav", true, 1);
+  await escreverTempo("Você está aí?", 200, 2000);
+  await escreverTempo("Nós estamos...", 200, 1000);
+  await escreverTempo("Conectados?", 200, 2000);
+  console.clear();
+  await wait(1000);
+  await escreverTempo("Você chegou aqui muito cedo.", 50, 1000);
+  await escreverTempo("Você não deveria estar aqui.", 50, 1000);
+  await escreverTempo("Mas, não vejo razão para não te deixar aqui.", 50, 2000);
+  await escreverTempo("Sem mais delongas, que comecemos.", 100, 2000);
+  await escreverTempo("Primeiro, seu nome.", 100, 2000);
+  let rl = novoReadLine();
+  export let nomeEntrada = await rl.question("DIGITE SEU NOME:\n\n");
+  console.clear();
+  rl.close();
 
 
-process.stdout.write("\x1B[2J\x1B[H");
-process.stdout.write("\x1B[?25l");
+  process.stdout.write("\x1B[2J\x1B[H");
+  process.stdout.write("\x1B[?25l");
 
 
-for (let escolha = "Não"; escolha === "Não";) {
-    console.clear();
-    ativarRawMode();
-    escolha = await simOuNao("Você aceita esse nome?");
+  for (let escolha = "Não"; escolha === "Não";) {
+      console.clear();
+      ativarRawMode();
+      escolha = await simOuNao("Você aceita esse nome?");
 
-    if (escolha === "Não" || escolha === "Voltar") {
-        fecharRawMode();
-        let rl = novoReadLine();
-        nomeEntrada = "";
-        console.clear();
-        await wait(1000);
-        nomeEntrada = await rl.question("DIGITE SEU NOME:\n\n");
-        rl.close();
-    }
-}
-process.stdin.setRawMode(false);
-process.stdin.pause();
-
-
-await wait(1000);
-console.clear();
-await escreverTempo(`'${nomeEntrada}'`, 50, 1500);
-await escreverTempo("Agora, vamos dar um nome a seu receptáculo neste mundo.", 50, 1000);
-let rl1 = novoReadLine();
-export let nomeVessel = await rl1.question("DIGITE O NOME DO SEU RECEPTÁCULO (Max.: 13 caracteres, sem espaços.):\n\n");
-console.clear()
-rl1.close();
-
-process.stdout.write("\x1B[2J\x1B[H");
-process.stdout.write("\x1B[?25l");
+      if (escolha === "Não" || escolha === "Voltar") {
+          fecharRawMode();
+          let rl = novoReadLine();
+          nomeEntrada = "";
+          console.clear();
+          await wait(1000);
+          nomeEntrada = await rl.question("DIGITE SEU NOME:\n\n");
+          rl.close();
+      }
+  }
+  process.stdin.setRawMode(false);
+  process.stdin.pause();
 
 
-for (let escolha = "Não"; escolha === "Não";) {
-    console.clear();
-    ativarRawMode();
-    if (nomeVessel.length < 13 && nomeVessel.includes(" ") === false) {
-        escolha = await simOuNao("Você aceita esse nome?");
-    } else {
-        escolha = "Não";
-    }
-    if (escolha === "Não" || escolha === "Voltar") {
-        fecharRawMode();
-        let rl = novoReadLine();
-        nomeVessel = "";
-        console.clear();
-        await wait(1000);
-        nomeVessel = await rl.question("DIGITE O NOME DO SEU RECEPTÁCULO (Max.: 13 caracteres, sem espaços.):\n\n");
-        rl.close();
-    }
-}
+  await wait(1000);
+  console.clear();
+  await escreverTempo(`'${nomeEntrada}'`, 50, 1500);
+  await escreverTempo("Agora, vamos dar um nome a seu receptáculo neste mundo.", 50, 1000);
+  let rl1 = novoReadLine();
+  export let nomeVessel = await rl1.question("DIGITE O NOME DO SEU RECEPTÁCULO (Max.: 13 caracteres, sem espaços.):\n\n");
+  console.clear()
+  rl1.close();
 
-fecharRawMode();
-await wait(1000);
-console.clear();
-if (nomeEntrada.toLowerCase() === nomeVessel.toLowerCase()) {
-    await escreverTempo(`'${nomeVessel}'.`, 50, 1500);
-    await escreverTempo("Claro, claro. Obviamente vocês dois são o mesmo.", 100, 2000);
-} else {
-    await escreverTempo(`Nós o chamamos de '${nomeVessel}'.`, 100, 2000);
-}
-await escreverTempo(`${nomeEntrada}... Não é certo que você saiba o que aconteceu.`, 100, 1000);
-await escreverTempo("Esta linha do tempo não deveria ser acessível.", 50, 1500);
-await escreverTempo("Você está disposto a passar por sofrimento e angústia?", 50, 1500);
-ativarRawMode();
-let resposta1 = await escolherOpcao("...\n", ["Sim", "Não", "Você esqueceu de algo."]);
-fecharRawMode();
-if (resposta1 === "Sim") {
-    console.clear();
-    await escreverTempo("Ótimo, você está preparado.", 50, 1500);
-    musica.pause();
-    await escreverVoz(npcs.Historia.padrao.voz, "Não esqueça.", 250, 3000);
-} else if (resposta1 === "Não") {
-    console.clear();
-    musica.pause();
-    await escreverTempo("É uma pena.", 100, 1500);
-    await escreverVoz(npcs.Historia.padrao.voz, "Você não tem escolha.", 250, 1000);
-    await wait(2000);
-} else {
-    console.clear();
-    await escreverTempo("'Esqueci de algo'... Você fala sobre seu corpo. Estou certo?", 100, 2500);
-    musica.pause();
-    await escreverTempo("Interesssante. Muito, muito interessante.", 100, 1500);
-    await escreverTempo("Vou contar-lhe as regras aqui...", 100, 1000);
-    await escreverTempo("Você não escolhe como quer ser.", 200, 2500);
-    await wait(1000);
-}
-fecharRawMode();
-definirSom("./sound/snd_impact.wav", false, 1);
-await wait(2000);
+  process.stdout.write("\x1B[2J\x1B[H");
+  process.stdout.write("\x1B[?25l");
+
+
+  for (let escolha = "Não"; escolha === "Não";) {
+      console.clear();
+      ativarRawMode();
+      if (nomeVessel.length < 13 && nomeVessel.includes(" ") === false) {
+          escolha = await simOuNao("Você aceita esse nome?");
+      } else {
+          escolha = "Não";
+      }
+      if (escolha === "Não" || escolha === "Voltar") {
+          fecharRawMode();
+          let rl = novoReadLine();
+          nomeVessel = "";
+          console.clear();
+          await wait(1000);
+          nomeVessel = await rl.question("DIGITE O NOME DO SEU RECEPTÁCULO (Max.: 13 caracteres, sem espaços.):\n\n");
+          rl.close();
+      }
+  }
+
+  fecharRawMode();
+  await wait(1000);
+  console.clear();
+  if (nomeEntrada.toLowerCase() === nomeVessel.toLowerCase()) {
+      await escreverTempo(`'${nomeVessel}'.`, 50, 1500);
+      await escreverTempo("Claro, claro. Obviamente vocês dois são o mesmo.", 100, 2000);
+  } else {
+      await escreverTempo(`Nós o chamamos de '${nomeVessel}'.`, 100, 2000);
+  }
+  await escreverTempo(`${nomeEntrada}... Não é certo que você saiba o que aconteceu.`, 100, 1000);
+  await escreverTempo("Esta linha do tempo não deveria ser acessível.", 50, 1500);
+  await escreverTempo("Você está disposto a passar por sofrimento e angústia?", 50, 1500);
+  ativarRawMode();
+  let resposta1 = await escolherOpcao("...\n", ["Sim", "Não", "Você esqueceu de algo."]);
+  fecharRawMode();
+  if (resposta1 === "Sim") {
+      console.clear();
+      await escreverTempo("Ótimo, você está preparado.", 50, 1500);
+      musica.pause();
+      await escreverVoz(npcs.Historia.padrao.voz, "Não esqueça.", 250, 3000);
+  } else if (resposta1 === "Não") {
+      console.clear();
+      musica.pause();
+      await escreverTempo("É uma pena.", 100, 1500);
+      await escreverVoz(npcs.Historia.padrao.voz, "Você não tem escolha.", 250, 1000);
+      await wait(2000);
+  } else {
+      console.clear();
+      await escreverTempo("'Esqueci de algo'... Você fala sobre seu corpo. Estou certo?", 100, 2500);
+      musica.pause();
+      await escreverTempo("Interesssante. Muito, muito interessante.", 100, 1500);
+      await escreverTempo("Vou contar-lhe as regras aqui...", 100, 1000);
+      await escreverTempo("Você não escolhe como quer ser.", 200, 2500);
+      await wait(1000);
+  }
+  fecharRawMode();
+  definirSom("./sound/snd_impact.wav", false, 1);
+  await wait(2000);
 
 let localAtual = setores["DarkWorld"]["Sala do Ovo"];
 musica = definirSom(localAtual["musica"], true, 1)
