@@ -1,29 +1,3 @@
-import {nomeEntrada, nomeVessel} from "index.js";
-
-export let jogador = {
-        nome: nomeEntrada,
-        nomeVessel: nomeVessel,
-        raca: "",
-        darkWorld: false,
-        LOVE: 0,
-        HATE: 0,
-        NEUTRAL: 0,
-        nullMagia: 1,
-        
-        armaLW: null,
-        armaDW: null,
-        
-        defesaLW: 0,
-        ataqueLW: 0,
-        defesaDW: 1,
-        ataqueDW: 0,
-        bonusMagia: 0,
-        magia: 0,
-        
-        armadurasDW: [],
-        inventarioLW: [],
-        inventarioDW: [], 
-    
     definirRaca() {
       this.raca = racaJogador[random % 3];
     },
@@ -85,4 +59,3 @@ export let jogador = {
         this.magia = (1 + this.bonusMagia) * this.nullMagia;
 
     }
-}

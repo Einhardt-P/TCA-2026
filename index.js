@@ -6,7 +6,44 @@ import process from "node:process";
 import { definirSom } from "./funcoes/tocarSom.js";
 import fs from "node:fs/promises";
 import { carregarMapaJSON } from "./funcoes/criarMapa.js";
+import { dirxml } from "node:console";
 
+let jogador = {
+    nome: "",
+    nomeVessel: "",
+    raca: "",
+    darkWorld: false,
+    LOVE: 0,
+    HATE: 0,
+    NEUTRAL: 0,
+    nullMagia: 1,
+    
+    armaLW: null,
+    armaDW: null,
+    
+    defesaLW: 0,
+    ataqueLW: 0,
+    defesaDW: 1,
+    ataqueDW: 0,
+    bonusMagia: 0,
+    magia: 0,
+    
+    armadurasDW: [],
+    inventarioLW: [],
+    inventarioDW: [], 
+
+}
+
+let jogadorJSON = JSON.stringify(jogador);
+
+async function lerDadosJogador() {
+    jogadorJSON = await fs.readFile("./arquivos/jogador.json", "utf8");
+    jogador = JSON.parse(jogadorJSON);
+}
+async function salvarDadosJogador() {
+    jogadorJSON = JSON.stringify(jogador);
+    await fs.writeFile("./arquivos/saves/jogador.json", jogadorJSON, "utf8");
+}
 
 function ignorarTeclado() {
     if (process.stdin.isTTY) {
@@ -417,6 +454,8 @@ async function iniciarJogo() {
   }
   fecharRawMode();
   definirSom("./sound/snd_impact.wav", false, 1);
+
+  salvarDadosJogador();
   await wait(2000);
 
 let localAtual = setores["DarkWorld"]["Sala do Ovo"];
