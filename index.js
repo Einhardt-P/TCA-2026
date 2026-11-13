@@ -79,12 +79,13 @@ let dialogoConcluido = false;
 let velocidadeNormalInteracao = 0;
 let velocidadeInteracao = 0;
 let pularInteracao = false;
+let ele = false;
 
 let modoAtual = "";
 let mapaGerado = "";
 
 function renderizarMapa(Mapa) {
-
+    ele = localAtual === setores["DarkWorld"]["Sala do Ovo"]
     process.stdout.write("\x1B[H\x1B[J")
 
     for (let y = 0; y < Mapa.length; y++) {
@@ -141,7 +142,8 @@ function mover(px, py) {
         mapa[novoY][novoX] === "#" ||
         mapa[novoY][novoX] === "|" ||
         mapa[novoY][novoX] === "=" ||
-        mapa[novoY][novoX] === "@"
+        mapa[novoY][novoX] === "@" &&
+        !ele
     ) {
         return;
     }
@@ -284,38 +286,14 @@ async function dialogoConfirmarComum(voz, dialogo, tempoEscrever) {
 }
 
 async function dialogoConfirmarArray(voz, dialogo, tempoEscrever) {
-    dialogoAtivo = true;
-    dialogoConcluido = false;
-    textoInteracao = "";
-    velocidadeNormalInteracao = tempoEscrever;
-    velocidadeInteracao = tempoEscrever;
-    pularInteracao = false;
-
-    for (let i = 0; i < dialogo.length; i++) {
-        textoInteracao += dialogo[i];
-        definirSom(voz, false, 1);
-        const devePausarMais = [",", ".", "!", "?", ";"].includes(dialogo[i]);
-{
-        if (!pularInteracao) {
-            if (devePausarMais) {
-                await wait(velocidadeInteracao / 2);
-            } else {
-                await wait(velocidadeInteracao);
-            }
-        } else {
-            textoInteracao += dialogo.substring(i);
-            break;
-        }
-        console.clear();
-        }
-}
+    await dialogoConfirmarComum(voz, dialogo.join("\n"), tempoEscrever);
 }
 
 async function dialogoConfirmar(voz, dialogo, tempoEscrever) {
     if (Array.isArray(dialogo)) {
-        dialogoConfirmarArray(voz, dialogo)
+        await dialogoConfirmarArray(voz, dialogo, tempoEscrever)
     } else {
-        dialogoConfirmarComum(voz, dialogo, tempoEscrever)
+        awaitdialogoConfirmarComum(voz, dialogo, tempoEscrever)
     }
     
 
@@ -442,6 +420,8 @@ async function iniciarJogo() {
   await wait(2000);
 
 let localAtual = setores["DarkWorld"]["Sala do Ovo"];
+posJogador.x = localAtual["Spawn"]["X"];
+posJogador.y = localAtual["Spawn"]["Y"];
 musica = definirSom(localAtual["musica"], true, 1)
 mapa = carregarMapaJSON(localAtual["mapa"]);
 process.stdout.write("\x1B[H");
