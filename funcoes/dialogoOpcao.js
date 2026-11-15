@@ -45,6 +45,7 @@ function selecionarOpcao(pergunta, opcoes) {
 
                 case "\n":
                   case "\r":
+                    case "z":
                     definirSom("./sound/snd_select.wav", false, 1);
                     process.stdin.removeListener("data", tratarTecla);
                     resolve(opcoes[indiceSelecionado]);

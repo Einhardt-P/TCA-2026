@@ -1,3 +1,0 @@
-export class inimigoNPC() {
-    constructor()
-}

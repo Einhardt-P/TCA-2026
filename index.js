@@ -6,17 +6,17 @@ import process from "node:process";
 import { definirSom } from "./funcoes/tocarSom.js";
 import fs from "node:fs/promises";
 import { carregarMapaJSON } from "./funcoes/criarMapa.js";
-import { dirxml } from "node:console";
 
 let jogador = {
     nome: "",
     nomeVessel: "",
     raca: "",
-    darkWorld: false,
+    DarkWorld: false,
     LOVE: 0,
     HATE: 0,
     NEUTRAL: 0,
     nullMagia: 1,
+    dinheiro: 0,
     
     armaLW: null,
     armaDW: null,
@@ -32,8 +32,111 @@ let jogador = {
     inventarioLW: [],
     inventarioDW: [], 
 
+    inventarioSave: [],
+    inventarioChave: []
 }
 
+    async function atualizarAtributos() {
+
+        jogador.DarkWorld = Object.values(setores["DarkWorld"]).includes(localAtual);
+
+        jogador.NEUTRAL = jogador.LOVE + jogador.HATE;
+        
+        let atqArmaLW = 0;
+        if (jogador.armaLW) {
+            atqArmaLW = jogador.armaLW.ataque;
+        }
+
+        let atqArmaDW = 0;
+        if (jogador.armaDW) {
+            atqArmaDW = jogador.armaDW.ataque;
+        }
+
+        if (jogador.armaDW) {
+            jogador.bonusMagia = jogador.armaDW.bonusMagia;
+        } else {
+            jogador.bonusMagia = 0;
+        }
+
+        let multDefesaDW = 0;
+        for (let i = 0; i < jogador.armadurasDW.length; i++) {
+            multDefesaDW += jogador.armadurasDW[i].defesa;
+        }
+
+        jogador.defesaLW = 1 * jogador.NEUTRAL;
+        jogador.ataqueLW = (1 * jogador.NEUTRAL) + atqArmaLW;
+        jogador.defesaDW = 1 * multDefesaDW;
+        jogador.ataqueDW = (1 * jogador.NEUTRAL) + atqArmaDW;
+        
+    }
+
+    async function guardarInventario(item) {
+        if (jogador.inventarioDW.length < 20) {
+        jogador.inventarioLW.push(item);
+        jogador.inventarioDW.push(item.DarkWorld);
+    } else {
+        jogador.inventarioSave.push(item);
+    }
+    }
+
+    async function equiparArma(arma) {
+        jogador.armaLW = arma;
+        jogador.armaDW = arma.DarkWorld;
+    }
+
+    async function equiparArmadura(armadura, slot) {
+        jogador.armadurasDW[slot] = armadura;
+    }
+
+    async function abrirInventario() {
+    await atualizarAtributos();
+    telaAtual = "inventario";
+    let escolha = "";
+    for (let aberto = true; aberto;) {
+        if (jogador.DarkWorld) {
+
+            escolha = await escolherOpcao(`D$ ${jogador.dinheiro}\n\nINVENTÁRIO:\n`, ["ITEM", "EQUIP", "CONFIG", "SAIR"]);
+            console.clear();
+
+            if (escolha === "ITEM" && jogador.inventarioDW.length > 0) {
+                for (let abertoItem = true; abertoItem;) {
+
+                escolha = await escolherOpcao("ITENS:\n\n", ["USAR", "FORA", "CHAVE", "SAIR"]);
+                console.clear();
+
+                if (escolha === "USAR") {
+
+                    const listaItens = ["SAIR", ...jogador.inventarioDW.map(item => item.nome)];
+                    escolha = await escolherOpcao("ITENS:\n\n", listaItens);
+                    console.clear();
+                    
+                    if (escolha !== "SAIR") {
+                        let itemEscolhido = jogador.inventarioDW.find(item => item.nome === escolha)
+                        itemEscolhido.usarItem();
+
+                        await atualizarAtributos();
+                    } else {
+                        abertoItem = false;
+                    }
+                }
+            }
+            }
+
+            if (escolha === "SAIR") {
+                aberto = false;
+                telaAtual = "mapa";
+            }
+        } else {
+            let escolha = await escolherOpcao(jogador.nomeVessel + "\n", ["ITEM", "STAT", "CELL", "SAIR"]);
+
+            if (escolha === "SAIR") {
+                aberto = false;
+                redesenhar = true;
+                telaAtual = "mapa";
+            }
+        }
+    }
+    }
 let jogadorJSON = JSON.stringify(jogador);
 
 async function lerDadosJogador() {
@@ -117,6 +220,8 @@ let velocidadeNormalInteracao = 0;
 let velocidadeInteracao = 0;
 let pularInteracao = false;
 let ele = false;
+let telaAtual = "";
+let redesenhar = true;
 
 let modoAtual = "";
 let mapaGerado = "";
@@ -167,6 +272,7 @@ function renderizarMapa(Mapa) {
     }
 }
 
+
 function mover(px, py) {
     const novoX = posJogador.x + px;
     const novoY = posJogador.y + py;
@@ -180,7 +286,7 @@ function mover(px, py) {
         mapa[novoY][novoX] === "|" ||
         mapa[novoY][novoX] === "=" ||
         mapa[novoY][novoX] === "@" &&
-        !ele
+        ele === false
     ) {
         return;
     }
@@ -199,8 +305,8 @@ function iniciarMovimento(modo) {
     lerPos(mult)
 }
 
-function lerPos(mult) {
-    process.stdin.on("data", (tecla) => {
+    async function lerPos(mult) {
+        process.stdin.on("data", (tecla) => {
         if (dialogoAtivo) {
             if (dialogoConcluido) {
                 if (tecla.toLowerCase().includes("z")) {
@@ -222,40 +328,55 @@ function lerPos(mult) {
             return;
         }
 
+        if (telaAtual !== "mapa") { return; }
+
         switch (tecla.toLowerCase()) {
             case "w":
                 visualAlma = sprites[0];
                 mover(0, -1 * mult);
+                redesenhar = true;
                 break;
 
             case "d":
                 visualAlma = sprites[1];
                 mover(1, 0);
+                redesenhar = true;
                 break;
 
             case "s":
                 visualAlma = sprites[2];
                 mover(0, 1 * mult);
+                redesenhar = true;
                 break;
 
             case "a":
                 visualAlma = sprites[3];
                 mover(-1, 0);
+                redesenhar = true;
                 break;
 
             case "z":
                 if (visualAlma === sprites[0] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x}-Y${posJogador.y - 1}`)) {
+                    telaAtual = "dialogo";
                     dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x}-Y${posJogador.y - 1}`], 100)
                 }
                 if (visualAlma === sprites[1] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x + 1}-Y${posJogador.y}`)) {
+                    telaAtual = "dialogo";
                     dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x + 1}-Y${posJogador.y}`], 100)
                 }
                 if (visualAlma === sprites[2] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x}-Y${posJogador.y + 1}`)) {
+                    telaAtual = "dialogo";
                     dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x}-Y${posJogador.y + 1}`], 100)
                 }
                 if (visualAlma === sprites[3] && Object.keys(localAtual["coordInterativas"]).some((coordenada) => coordenada === `X${posJogador.x - 1}-Y${posJogador.y}`)) {
+                    telaAtual = "dialogo";
                     dialogoConfirmar("./sound/snd_text.wav", localAtual["coordInterativas"][`X${posJogador.x - 1}-Y${posJogador.y}`], 100)
                 }
+                break;
+
+            case "c":
+                telaAtual = "inventario";
+                abrirInventario();
                 break;
         }
 
@@ -263,7 +384,9 @@ function lerPos(mult) {
 
 }
 
-
+async function comecarCombate(npc) {
+    
+}
 
 const NPCJSON = await fs.readFile("./arquivos/npcs.json", "utf-8");
 const npcs = JSON.parse(NPCJSON);
@@ -330,7 +453,7 @@ async function dialogoConfirmar(voz, dialogo, tempoEscrever) {
     if (Array.isArray(dialogo)) {
         await dialogoConfirmarArray(voz, dialogo, tempoEscrever)
     } else {
-        awaitdialogoConfirmarComum(voz, dialogo, tempoEscrever)
+        await dialogoConfirmarComum(voz, dialogo, tempoEscrever)
     }
     
 
@@ -346,15 +469,15 @@ async function iniciarJogo() {
 
   await iniciarJogo();
   musica = definirSom("./sound/AUDIO_DRONE.wav", true, 1);
-  await escreverTempo("Você está aí?", 200, 2000);
-  await escreverTempo("Nós estamos...", 200, 1000);
-  await escreverTempo("Conectados?", 200, 2000);
-  console.clear();
-  await wait(1000);
-  await escreverTempo("Você chegou aqui muito cedo.", 50, 1000);
-  await escreverTempo("Você não deveria estar aqui.", 50, 1000);
-  await escreverTempo("Mas, não vejo razão para não te deixar aqui.", 50, 2000);
-  await escreverTempo("Sem mais delongas, que comecemos.", 100, 2000);
+//   await escreverTempo("Você está aí?", 200, 2000);
+//   await escreverTempo("Nós estamos...", 200, 1000);
+//   await escreverTempo("Conectados?", 200, 2000);
+//   console.clear();
+//   await wait(1000);
+//   await escreverTempo("Você chegou aqui muito cedo.", 50, 1000);
+//   await escreverTempo("Você não deveria estar aqui.", 50, 1000);
+//   await escreverTempo("Mas, não vejo razão para não te deixar aqui.", 50, 2000);
+//   await escreverTempo("Sem mais delongas, que comecemos.", 100, 2000);
   await escreverTempo("Primeiro, seu nome.", 100, 2000);
   let rl = novoReadLine();
   export let nomeEntrada = await rl.question("DIGITE SEU NOME:\n\n");
@@ -454,11 +577,14 @@ async function iniciarJogo() {
   }
   fecharRawMode();
   definirSom("./sound/snd_impact.wav", false, 1);
-
+  
+  jogador.nomeEntrada = nomeEntrada;
+  jogador.nomeVessel = nomeVessel;
   salvarDadosJogador();
   await wait(2000);
 
 let localAtual = setores["DarkWorld"]["Sala do Ovo"];
+atualizarAtributos();
 posJogador.x = localAtual["Spawn"]["X"];
 posJogador.y = localAtual["Spawn"]["Y"];
 musica = definirSom(localAtual["musica"], true, 1)
@@ -467,9 +593,15 @@ process.stdout.write("\x1B[H");
 process.stdout.write("\x1B[?25l");
 ativarRawMode();
 
+telaAtual = "mapa";
 
-setInterval(() => {
+if (telaAtual === "mapa") {
+    setInterval(() => {
+    if (!redesenhar) { return; }
+
     renderizarMapa(mapa);
+    redesenhar = false;
 }, (1000 / 30));
-console.clear();
-iniciarMovimento(modoAtual);
+    console.clear();
+    iniciarMovimento(modoAtual);
+    }
