@@ -1,2 +1,31 @@
 # TCA-2026
-Um jogo de RPG com mecânicas inspiradas em UNDERTALE/DELTARUNE.
+
+Jogo de RPG em desenvolvimento, com mecânicas inspiradas em **UNDERTALE** e **DELTARUNE**. A aventura acontece no terminal e combina exploração, diálogos e interação com o mundo do jogo.
+
+## Sobre o projeto
+
+O projeto busca criar uma experiência de RPG textual com exploração de mapas, conversas com personagens e sistemas de itens e equipamentos. O progresso pode ser salvo localmente.
+
+Entre os elementos do jogo estão:
+
+- movimentação e exploração de mapas;
+- diálogos e interações;
+- inventário, itens e equipamentos;
+- dados de jogo armazenados em arquivos JSON;
+- efeitos sonoros e música.
+
+## Tecnologias
+
+- **JavaScript** com ES Modules;
+- **Node.js 18 ou superior**;
+- **JSON** para armazenar dados do jogo;
+- dependências declaradas: `audio` e `express`.
+
+## Como executar
+
+1. Instale o [Node.js 18 ou superior](https://nodejs.org/).
+2. Clone o repositório e entre na pasta:
+
+   ```bash
+   git clone https://github.com/Einhardt-P/TCA-2026.git
+   cd TCA-2026
