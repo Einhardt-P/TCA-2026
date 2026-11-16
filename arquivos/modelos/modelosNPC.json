@@ -1,32 +1,27 @@
 {
     "NPCsAgressivos": {
         "DarkWorld": {
-            "QuartoDaDess": {
-                "HoHoHolmgang": {
+            "CavernaGélida": {
+                "Ho-Ho-Hel": {
                     "HPMax": "350",
-                    "Ataques": [],
-                    "MensagensCombate": [],
-                    "DiálogosCombate": [],
-                    "Ações": [],
+                    "Ataques": [
+                        {
+                            "Nome": "Chuva de Carvão",
+                            "DuracaoMs": 6000,
+                            "Frames": [
+                                {"x": Math.random(), "y": 0}
+                            ]
+                        }
+                    ],
+                    "MensagensCombate": ["Você está na lista dos levados."],
+                    "Ações": [
+                        {
+                            "Checar": "Ho-Ho-Hel: ATQ 5 DEF 2\nUm guerreiro bárbaro que pune quem não se comporta.",
+                            "Comportar-Se": "50MERCY"
+                        }
+                    ],
                     "ItemLW": "Boneco de Papai Noel"
                 },
-                
-                "Cardibim": {
-                    "HPMax": "200",
-                    "Ataques": [],
-                    "MensagensCombate": [],
-                    "DiálogosCombate": [],
-                    "Ações": [],
-                    "ItemLW": "Almofada de Coração"
-                },
-
-                "Holitar": {
-                    "HPMax": "1000",
-                    "MensagensCombate": [],
-                    "DiálogosCombate": [],
-                    "Ações": [],
-                    "ItemLW": "Violão"
-                }
             }
         }
     }

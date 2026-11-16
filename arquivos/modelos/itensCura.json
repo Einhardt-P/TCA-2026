@@ -1,0 +1,17 @@
+{
+    "DoceTrevoso": {
+        "nome": "DoceTrevoso",
+        "fatorCura": 40,
+        "precoVenda": 13,
+        "precoCompra": 40,
+        "descricao": "* Uma fruta grudenta com cheiro de marshmallow."
+    },
+
+    "Xis-AVC": {
+        "nome": "Xis-AVC",
+        "fatorCura": 1000000000000000000,
+        "precoVenda": 999999,
+        "precoCompra": 99999999999999999999999999999999999,
+        "descricao": "* Apenas um pedaço te faz infartar."
+    }
+}

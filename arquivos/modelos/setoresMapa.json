@@ -20,7 +20,6 @@
         "  }{    }{    }{    }{    }{    }{    }{    }{    #~   ~~~~  ~   ~~~~  ~   ~~~~  ~   ~~~~   ~ \n",
         "                                                  #~~~~~     ~~~~~     ~~~~~     ~~~~~     ~~~"
       ],
-
       "musica": "./mus/1-TheLake.ogg",
       "coordInterativas": {
         "X47-Y7": "* É um buraco na areia.\n* Parece ser de onde você veio.",
@@ -29,16 +28,71 @@
       "Spawn": {
         "X": 46,
         "Y": 8
+      },
+      "alternar": {
+        "y": [
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "x": 0,
+        "novoMapa": "setores['LightWorld']['lojaTeste']['mapa']"
       }
+    },
+    "lojaTeste": {
+      "mapa": [
+        "  __    __    __    __    __    __    __    __    __    __    __    __    __    __    __    __  \n",
+        " (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00) \n",
+        "(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)\n",
+        "  }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{  \n",
+        "############################################################################################### \n",
+        "#                     #####L#O#J#A#####                                                       = \n",
+        "#                     #######===#######                                                       = \n",
+        "#                                                                                             = \n",
+        "#                                                                                             = \n",
+        "#                                                                                             = \n",
+        "############################################################################################### \n",
+        "  __    __    __    __    __    __    __    __    __    __    __    __    __    __    __    __  \n",
+        " (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00)  (00) \n",
+        "(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)(0000)\n",
+        "  }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{    }{   "
+      ],
+      "musica": "./mus/1-TheLake.ogg",
+      "Spawn": {
+        "X": 93,
+        "Y": 8
+      },
+      "alternar": {
+        "y": [
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "x": 94,
+        "novoMapa": "setores['LightWorld']['Lago']['mapa']",
+
+        "entrarLoja": {
+          "y": 4,
+          "x": [
+              29,
+              30,
+              31
+            ]
     }
-  },
+  }
+  }
+},
   "DarkWorld": {
     "Sala do Ovo": {
       "mapa": [
         "                        _____                               \n",
         "                   ____| ____|                              \n",
         "         ____  ___|      |_______                           \n",
-        "      __|    \/                  |                          \n",
+        "      __|    /                  |                           \n",
         "     |                           |_____                     \n",
         "   __|                                 |                    \n",
         "  |_                                   |                    \n",
@@ -66,17 +120,63 @@
       ],
       "musica": "./mus/him.ogg",
       "coordInterativas": {
-        "X18-Y12": ["* ...\n* O homem parece assustado com a sua presença.", "* Ele não entende como você está aqui.", "* Mas... Ele sorri.", "* O homem te oferece algo.\n* Não. Ele lhe dá de qualquer forma."],
-        "X17-Y12": ["* ...\n* O homem parece assustado com a sua presença.", "* Ele não entende como você está aqui.", "* Mas... Ele sorri.", "* O homem te oferece algo.\n* Não. Ele lhe dá de qualquer forma."],
-        "X16-Y12": ["* ...\n* O homem parece assustado com a sua presença.", "* Ele não entende como você está aqui.", "* Mas... Ele sorri.", "* O homem te oferece algo.\n* Não. Ele lhe dá de qualquer forma."],
-
-        "X18-Y12-1": ["* Ele não está mais atrás da árvore.", "* Você olhou pra trás...\n Você pensou ter visto alguém muito parecido com Kris."],
-        "X17-Y12-1": ["* Ele não está mais atrás da árvore.", "* Você olhou pra trás...\n Você pensou ter visto alguém muito parecido com Kris."],
-        "X16-Y12-1": ["* Ele não está mais atrás da árvore.", "* Você olhou pra trás...\n Você pensou ter visto alguém muito parecido com Kris."]
+        "X18-Y12": [
+          "* ...\n* O homem parece assustado com a sua presença.",
+          "* Ele não entende como você está aqui.",
+          "* Mas... Ele sorri.",
+          "* O homem te oferece algo.\n* Não. Ele lhe dá de qualquer forma."
+        ],
+        "X17-Y12": [
+          "* ...\n* O homem parece assustado com a sua presença.",
+          "* Ele não entende como você está aqui.",
+          "* Mas... Ele sorri.",
+          "* O homem te oferece algo.\n* Não. Ele lhe dá de qualquer forma."
+        ],
+        "X16-Y12": [
+          "* ...\n* O homem parece assustado com a sua presença.",
+          "* Ele não entende como você está aqui.",
+          "* Mas... Ele sorri.",
+          "* O homem te oferece algo.\n* Não. Ele lhe dá de qualquer forma."
+        ],
+        "X18-Y12-1": [
+          "* Ele não está mais atrás da árvore.",
+          "* Você olhou pra trás...\n Você pensou ter visto alguém muito parecido com Kris."
+        ],
+        "X17-Y12-1": [
+          "* Ele não está mais atrás da árvore.",
+          "* Você olhou pra trás...\n Você pensou ter visto alguém muito parecido com Kris."
+        ],
+        "X16-Y12-1": [
+          "* Ele não está mais atrás da árvore.",
+          "* Você olhou pra trás...\n Você pensou ter visto alguém muito parecido com Kris."
+        ]
       },
       "Spawn": {
         "X": 21,
         "Y": 25
+      },
+
+      "alternar": {
+        "y": 27,
+        "x": [
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28
+        ],
+
+        "novoMapa": "setores['LightWorld']['Lago']['mapa']"
       }
     }
   }

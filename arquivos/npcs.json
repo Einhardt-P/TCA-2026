@@ -2,10 +2,6 @@
     "Historia": {
         "padrao": {
             "voz": "./sound/snd_text.wav"
-        },
-
-        "sans": {
-            "voz": "./sound/snd_txtsans.wav"
         }
     }
 }
